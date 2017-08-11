@@ -3,8 +3,8 @@
 // Include the correct display library
 // For a connection via I2C using Wire include
 #include <Wire.h>  // Only needed for Arduino 1.6.5 and earlier
-#include "oled/SSD1306.h" // alias for `#include "SSD1306Wire.h"`
-#include "oled/OLEDDisplayUi.h"
+#include <SSD1306.h> // alias for `#include "SSD1306Wire.h"`
+#include <OLEDDisplayUi.h>
 // Initialize the OLED display using Wire library
 SSD1306  display(0x3c, 5 , 4);
 OLEDDisplayUi ui(&display);
