@@ -5,19 +5,43 @@
 #include <Wire.h>  // Only needed for Arduino 1.6.5 and earlier
 #include <SSD1306.h> // alias for `#include "SSD1306Wire.h"`
 #include <OLEDDisplayUi.h>
+
+// BLE TEST
+#include <BLE.h>
+#include <BLEUtils.h>
+#include <BLEServer.h>
+BLE ble;
+// See the following for generating UUIDs:
+// https://www.uuidgenerator.net/
+#define SERVICE_UUID        "4fafc201-1fb5-459e-8fcc-c5c9c331914b"
+#define CHARACTERISTIC_UUID "beb5483e-36e1-4688-b7f5-ea07361b26a8"
+void initBLE(){
+  ble.initServer("MyESP32");
+  BLEServer *pServer = new BLEServer();
+  BLEService *pService = pServer->createService(BLEUUID(SERVICE_UUID));
+  BLECharacteristic *pCharacteristic = pService->createCharacteristic(
+   BLEUUID(CHARACTERISTIC_UUID),
+   BLECharacteristic::PROPERTY_READ | BLECharacteristic::PROPERTY_WRITE
+  );
+  pCharacteristic->setValue("Hello World says Tony");
+  pService->start();
+  BLEAdvertising *pAdvertising = pServer->getAdvertising();
+  pAdvertising->start();
+}
+
 // Initialize the OLED display using Wire library
 SSD1306  display(0x3c, 5 , 4);
 OLEDDisplayUi ui(&display);
-
 #define ADCMAX (1<<12)
 int sig1;
+
+
 #define HEARTPIN 25
 int heartrate = 0;
 float signalBuffer[DISPLAY_WIDTH];
 int signalBufferOffset=0;
 
 #define storeSignal(v) signalBuffer[signalBufferOffset++%DISPLAY_WIDTH]=(v)
-
 void setup() {
   Serial.begin(115200);
   display.init();
@@ -27,19 +51,21 @@ void setup() {
   for(int i=0;i<DISPLAY_WIDTH;i++){
     storeSignal(0.7);
   }
+  initBLE();
 }
 
 typedef enum { DISPLAY_HOME, DISPLAY_SIGNAL, DISPLAY_PROGRESS} DisplayState;
 DisplayState dispState = DISPLAY_SIGNAL;
 void updateOLED(){
-  #if 0 // Invert colors
+#if 1 // Invert colors
     display.clear();
     display.setColor(WHITE);
-  #else
+#else
     display.setColor(WHITE);
     display.fillRect(0,0,DISPLAY_WIDTH,DISPLAY_HEIGHT);
     display.setColor(BLACK);
-  #endif
+#endif
+
   display.setTextAlignment(TEXT_ALIGN_LEFT);
   display.setFont(ArialMT_Plain_10);
   switch(dispState){
@@ -53,17 +79,17 @@ void updateOLED(){
         for(int i = 0; i< DISPLAY_WIDTH; i++) display.setPixel(i,DISPLAY_HEIGHT/2);
       #endif
 
-      #if 0 // Visualize signal as scattered pixels
+      if(0){ // Visualize signal as scattered pixels
         for(int i = 0; i< DISPLAY_WIDTH; i++){
           display.setPixel(i,DISPLAY_HEIGHT- (DISPLAY_HEIGHT/1.0f)*signalBuffer[(signalBufferOffset+i)%DISPLAY_WIDTH]);
         }
-      #else // Visualize signal as connected lines
+      }else{ // Visualize signal as connected lines
         for (size_t i = 1; i < DISPLAY_WIDTH; i++) {
           float y0 = signalBuffer[(signalBufferOffset+i-1)%DISPLAY_WIDTH];
           float y1 = signalBuffer[(signalBufferOffset+i)%DISPLAY_WIDTH];
           display.drawLine(i-1,DISPLAY_HEIGHT- (DISPLAY_HEIGHT/1.0f)*y0,i,DISPLAY_HEIGHT- (DISPLAY_HEIGHT/1.0f)*y1);
         }
-      #endif
+      }
       // Display raw value in top left
       display.drawString(0,0,String("SIGNAL "+ String(sig1,DEC)));
       // Temporary display for heartrate.
@@ -110,18 +136,18 @@ void calculateHeartrate(){
 uint8_t globDelay=5;
 void handleSerial(){
   if(Serial.available()>1){
-    #if 0
-    String line = Serial.readStringUntil('\n');
-    line.trim();
-    size_t pos=line.indexOf(' ');
-    String code = line.substring(0,pos);
-    String argss = line.substring(pos);
-    argss.trim();
-    Serial.println(String("Code: '"+code+"' Args: `"+argss+"`"));
-    if(code.equalsIgnoreCase("S0")){
+    if(0){
+      String line = Serial.readStringUntil('\n');
+      line.trim();
+      size_t pos=line.indexOf(' ');
+      String code = line.substring(0,pos);
+      String argss = line.substring(pos);
+      argss.trim();
+      Serial.println(String("Code: '"+code+"' Args: `"+argss+"`"));
+      if(code.equalsIgnoreCase("S0")){
 
-    }
-    #else
+      }
+    }else{
       char code = Serial.read();
       switch(code){
         case 'S':
@@ -129,7 +155,7 @@ void handleSerial(){
           dispState= (DisplayState) Serial.parseInt();
           break;
       }
-    #endif
+    }
   }
 }
 void loop() {
