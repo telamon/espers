@@ -45,13 +45,13 @@ int signalBufferOffset=0;
 void setup() {
   Serial.begin(115200);
   display.init();
-  display.flipScreenVertically();
+  //display.flipScreenVertically();
   display.setContrast(255);
   pinMode(HEARTPIN,INPUT);
   for(int i=0;i<DISPLAY_WIDTH;i++){
     storeSignal(0.7);
   }
-  initBLE();
+  //initBLE();
 }
 
 typedef enum { DISPLAY_HOME, DISPLAY_SIGNAL, DISPLAY_PROGRESS} DisplayState;
