@@ -1,6 +1,7 @@
 #include "heart.h"
 namespace espers {
-Heart::Heart() {
+Heart::Heart(ApplicationState* pState) {
+  this->pState = pState;
   heartrate = 0;
   period = 0;
   nPulses = 0;
@@ -36,6 +37,10 @@ void Heart::process(uint16_t signal, uint32_t millis) {
     heartrate = (nPulses * 20 + prevHeart) / 2;
     period = millis;
     nPulses = 0;
+
+    // Export current heartrate for display
+    pState->disp_heartrate = heartrate;
+
     // Broadcast new heartrate
     if (pNotifyCharacteristic != NULL) {
       pNotifyCharacteristic->setValue(String(heartrate).c_str());

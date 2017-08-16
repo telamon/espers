@@ -2,46 +2,52 @@
 #include "display.h"
 
 namespace espers {
-Display::Display() {
+Display::Display(ApplicationState* pState) {
+  state = pState;
   // Initialize the OLED display using Wire library
   display = new SSD1306(I2C_ADDR, I2C_SDA, I2C_SCL);
   display->init();
-  display->flipScreenVertically();
-  display->setContrast(255);
-  dispState = DISPLAY_SIGNAL;
+
+  // TODO: figure out how to do this withouth reboot.
+  if (state->disp_flipSreen) display->flipScreenVertically();
 }
 void Display::storeSignal(float normalizedSample) {
   //#define storeSignal(v) signalBuffer[signalBufferOffset++%DISPLAY_WIDTH]=(v)
   signalBuffer[signalBufferOffset++ % DISPLAY_WIDTH] = normalizedSample;
 }
-void Display::setSig1(uint16_t sample) { sig1 = sample; }
 
-DisplayState Display::getState() { return dispState; }
-
-void Display::setState(DisplayState state) { dispState = state; }
 void Display::setProgress(uint8_t percentage) {
   this->progress = percentage % 100;
 }
-void Display::smoothProgressFinish(uint8_t frameDelay) {
-  while (progress < 101) {
-    progress++;
-    redraw(millis());
-    delay(frameDelay);
+void Display::animateProgress(uint8_t percentage, uint8_t frameDelay) {
+  if (percentage - progress < 0) {
+    while (progress > percentage) {
+      progress--;
+      redraw(millis());
+      delay(frameDelay);
+    }
+  } else {
+    while (progress < percentage) {
+      progress++;
+      redraw(millis());
+      delay(frameDelay);
+    }
   }
 }
 void Display::redraw(uint32_t millis) {
-  if (1) {  // Invert colors
-    display->clear();
-    display->setColor(WHITE);
-  } else {
+  display->setContrast(state->disp_contrast);
+  if (state->disp_invertColors) {  // Invert colors
     display->setColor(WHITE);
     display->fillRect(0, 0, DISPLAY_WIDTH, DISPLAY_HEIGHT);
     display->setColor(BLACK);
+  } else {
+    display->clear();
+    display->setColor(WHITE);
   }
 
   display->setTextAlignment(TEXT_ALIGN_LEFT);
   display->setFont(ArialMT_Plain_10);
-  switch (dispState) {
+  switch (state->disp_state) {
     case DISPLAY_HOME:
       display->drawString(0, 0, "HOME");
       break;
@@ -68,13 +74,14 @@ void Display::redraw(uint32_t millis) {
         }
       }
       // Display raw value in top left
-      display->drawString(0, 0, String("SIGNAL " + String(sig1, DEC)));
+      display->drawString(0, 0,
+                          String("SIGNAL " + String(state->disp_sig1, DEC)));
       // Display blemessage
 
-      display->drawString(0, 12, serviceMessage.c_str());
+      display->drawString(0, 12, state->disp_message1);
       // Temporary display for heartrate.
       display->setTextAlignment(TEXT_ALIGN_RIGHT);
-      // display->drawString(DISPLAY_WIDTH,0,String(heartrate));
+      display->drawString(DISPLAY_WIDTH, 0, String(state->disp_heartrate));
       break;
     case DISPLAY_PROGRESS:
       // draw the progress bar

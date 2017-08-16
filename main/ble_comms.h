@@ -6,6 +6,7 @@
 #include <BLEServer.h>
 #include <BLEUtils.h>
 #include <esp_log.h>
+#include "application_state.h"
 namespace espers {
 
 // See the following for generating UUIDs:
@@ -16,11 +17,11 @@ namespace espers {
 #define CTRL_CHARACTERISTIC_UUID "63b9c4cc-8279-458d-9514-11127f8ae75a"
 class BLEComms {
  public:
-  BLEComms();
+  BLEComms(ApplicationState* pState);
   BLECharacteristic* getHeartCharacteristic();
 
  private:
-  // BLE ble;
+  ApplicationState* pState;
   BLECharacteristic* pHeartChara;
   BLECharacteristic* pCtrlChara;
   std::string serviceMessage = "unused";

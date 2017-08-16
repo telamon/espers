@@ -5,15 +5,15 @@
 
 #include <Arduino.h>
 #include <esp_log.h>
+#include "application_state.h"
 #include "ble_comms.h"
 #include "display.h"
 #include "heart.h"
-
 static const char* LOG_TAG = "Espers";
 
-#define HEARTPIN 0
+#define HEARTPIN 25
 
-uint8_t globDelay = 20;
+espers::ApplicationState state;
 espers::Display* pDisplay;
 espers::Heart* pHeart;
 espers::BLEComms* pBLEComms;
@@ -23,29 +23,26 @@ void setup() {
   ESP_LOGD(LOG_TAG, ">> Starting up");
 
   ESP_LOGD(LOG_TAG, ">> Initializing display");
-  pDisplay = new espers::Display();
-  pDisplay->setState(espers::DisplayState::DISPLAY_PROGRESS);
-  pDisplay->setProgress(10);
+  pDisplay = new espers::Display(&state);
+  state.disp_state = espers::DisplayState::DISPLAY_PROGRESS;
+  pDisplay->setProgress(0);
   pDisplay->redraw(millis());
 
   for (int i = 0; i < DISPLAY_WIDTH; i++) {
     pDisplay->storeSignal(0.7);
   }
 
-  pDisplay->setProgress(20);
-  pDisplay->redraw(millis());
   ESP_LOGD(LOG_TAG, ">> Initializing heartrate processing");
   pinMode(HEARTPIN, INPUT);
-  pHeart = new espers::Heart();
+  pHeart = new espers::Heart(&state);
 
-  pDisplay->setProgress(30);
-  pDisplay->redraw(millis());
+  pDisplay->animateProgress(30, 10);
   ESP_LOGD(LOG_TAG, ">> Initializing BLECommunications");
-  pBLEComms = new espers::BLEComms();
+  pBLEComms = new espers::BLEComms(&state);
   pHeart->setNotifyCharacteristic(pBLEComms->getHeartCharacteristic());
 
-  pDisplay->smoothProgressFinish(5);
-  pDisplay->setState(espers::DisplayState::DISPLAY_SIGNAL);
+  pDisplay->animateProgress(100, 5);
+  state.disp_state = espers::DisplayState::DISPLAY_SIGNAL;
 }
 
 void loop() {
@@ -53,10 +50,10 @@ void loop() {
   // Store signal
   int sample = analogRead(HEARTPIN);
   pDisplay->storeSignal(sample / 4095.f);
-  pDisplay->setSig1(sample);
+  state.disp_sig1 = sample;
 
   pHeart->process(sample, time);
   pDisplay->redraw(time);
 
-  delay(globDelay);
+  delay(state.glob_delay);
 }

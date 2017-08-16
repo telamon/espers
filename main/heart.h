@@ -6,18 +6,21 @@
 
 #include <Arduino.h>
 #include <BLECharacteristic.h>
+#include "application_state.h"
 namespace espers {
 
 #define ADCMAX (1 << 12)
 #define THRESHOLD_DECAY 100
 #define PERIOD_INTERVAL 3000
+
 class Heart {
  public:
-  Heart();
+  Heart(ApplicationState* pState);
   void process(uint16_t signal, uint32_t millis);
   void setNotifyCharacteristic(BLECharacteristic* pCharacteristic);
 
  private:
+  ApplicationState* pState;
   BLECharacteristic* pNotifyCharacteristic;
   int heartrate = 0;
   int period = 0;

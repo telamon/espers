@@ -22,7 +22,8 @@ namespace espers {
   }
   };*/
 BLECharacteristic* BLEComms::getHeartCharacteristic() { return pHeartChara; }
-BLEComms::BLEComms() {
+BLEComms::BLEComms(ApplicationState* pState) {
+  this->pState = pState;
   ESP_LOGD(LOG_TAG, ">> BLE initialization starting.");
   // Initalize BLE env
   BLE::initServer("Espers");
