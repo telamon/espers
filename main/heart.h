@@ -5,7 +5,6 @@
 #define HEART_H_
 
 #include <Arduino.h>
-#include <BLECharacteristic.h>
 #include "application_state.h"
 namespace espers {
 
@@ -17,11 +16,9 @@ class Heart {
  public:
   Heart(ApplicationState* pState);
   void process(uint16_t signal, uint32_t millis);
-  void setNotifyCharacteristic(BLECharacteristic* pCharacteristic);
 
  private:
   ApplicationState* pState;
-  BLECharacteristic* pNotifyCharacteristic;
   int heartrate = 0;
   int period = 0;
   int nPulses = 0;

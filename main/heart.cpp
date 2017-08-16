@@ -8,11 +8,6 @@ Heart::Heart(ApplicationState* pState) {
   released = true;
   prevHeart = 0;
   threshold = 200;
-  pNotifyCharacteristic = NULL;
-}
-
-void Heart::setNotifyCharacteristic(BLECharacteristic* pCharacteristic) {
-  pNotifyCharacteristic = pCharacteristic;
 }
 
 void Heart::process(uint16_t signal, uint32_t millis) {
@@ -42,9 +37,9 @@ void Heart::process(uint16_t signal, uint32_t millis) {
     pState->disp_heartrate = heartrate;
 
     // Broadcast new heartrate
-    if (pNotifyCharacteristic != NULL) {
-      pNotifyCharacteristic->setValue(String(heartrate).c_str());
-      pNotifyCharacteristic->notify();
+    if (pState->ble_heartCharacteristic != NULL) {
+      pState->ble_heartCharacteristic->setValue(String(heartrate).c_str());
+      pState->ble_heartCharacteristic->notify();
     }
   }
 }

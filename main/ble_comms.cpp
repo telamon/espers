@@ -4,24 +4,37 @@
  */
 #include "ble_comms.h"
 namespace espers {
-/* --------- Initialize BLE --- */
-/*class TestCb : public BLECharacteristicCallbacks {
-  void onRead(BLECharacteristic *pCharacteristic){
-  pCharacteristic->setValue(serviceMessage);
-  }
-  void onWrite(BLECharacteristic *pCharacteristic){
-  serviceMessage = pCharacteristic->getValue();
-  }
-  };
 
-  class CtrlCallbacks : public BLECharacteristicCallbacks {
-  void onRead(BLECharacteristic *pCharacteristic){
+class TestCb : public BLECharacteristicCallbacks {
+ public:
+  TestCb(ApplicationState* pState) : BLECharacteristicCallbacks() {
+    this->pState = pState;
   }
-  void onWrite(BLECharacteristic *pCharacteristic){
-  std::string cmd = pCharacteristic->getValue();
+  void onRead(BLECharacteristic* pCharacteristic) {
+    pCharacteristic->setValue(pState->disp_message1);
   }
-  };*/
-BLECharacteristic* BLEComms::getHeartCharacteristic() { return pHeartChara; }
+  void onWrite(BLECharacteristic* pCharacteristic) {
+    pState->disp_message1 = pCharacteristic->getValue().c_str();
+  }
+
+ private:
+  ApplicationState* pState;
+};
+
+class CtrlCallbacks : public BLECharacteristicCallbacks {
+ public:
+  CtrlCallbacks(ApplicationState* pState) : BLECharacteristicCallbacks() {
+    this->pState = pState;
+  }
+  void onRead(BLECharacteristic* pCharacteristic) {}
+  void onWrite(BLECharacteristic* pCharacteristic) {
+    std::string cmd = pCharacteristic->getValue();
+  }
+
+ private:
+  ApplicationState* pState;
+};
+
 BLEComms::BLEComms(ApplicationState* pState) {
   this->pState = pState;
   ESP_LOGD(LOG_TAG, ">> BLE initialization starting.");
@@ -35,19 +48,23 @@ BLEComms::BLEComms(ApplicationState* pState) {
   BLEService* pService = pServer->createService(SERVICE_UUID);
 
   // Create the characteristics
-  pHeartChara = pService->createCharacteristic(
+
+  // heartrate characteristic
+  // exposed on appstate
+  pState->ble_heartCharacteristic = pService->createCharacteristic(
       HEARTRATE_CHARACTERISTIC_UUID, BLECharacteristic::PROPERTY_READ);
-  pHeartChara->setValue("<initializing>");
+  pState->ble_heartCharacteristic->setValue("<initializing>");
+
   // Message/display characteristic
   BLECharacteristic* pMsgChr = pService->createCharacteristic(
       MSG_CHARACTERISTIC_UUID,
       BLECharacteristic::PROPERTY_READ | BLECharacteristic::PROPERTY_WRITE);
-  // pMsgChr->setCallbacks(new TestCb());
+  pMsgChr->setCallbacks(new TestCb(pState));
 
   pCtrlChara = pService->createCharacteristic(
       CTRL_CHARACTERISTIC_UUID,
       BLECharacteristic::PROPERTY_READ | BLECharacteristic::PROPERTY_WRITE);
-  // pCtrlChara->setCallbacks(new CtrlCallbacks());
+  pCtrlChara->setCallbacks(new CtrlCallbacks(pState));
 
   // Start the service (now it's usable but not advertising it's existance)
   pService->start();
@@ -57,4 +74,5 @@ BLEComms::BLEComms(ApplicationState* pState) {
   pAdvertising->start();
   ESP_LOGD(LOG_TAG, ">> BLE initialization finished.");
 }
+
 }  // namespace espers

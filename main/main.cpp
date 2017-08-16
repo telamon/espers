@@ -39,7 +39,6 @@ void setup() {
   pDisplay->animateProgress(30, 10);
   ESP_LOGD(LOG_TAG, ">> Initializing BLECommunications");
   pBLEComms = new espers::BLEComms(&state);
-  pHeart->setNotifyCharacteristic(pBLEComms->getHeartCharacteristic());
 
   pDisplay->animateProgress(100, 5);
   state.disp_state = espers::DisplayState::DISPLAY_SIGNAL;

@@ -18,13 +18,10 @@ namespace espers {
 class BLEComms {
  public:
   BLEComms(ApplicationState* pState);
-  BLECharacteristic* getHeartCharacteristic();
 
  private:
   ApplicationState* pState;
-  BLECharacteristic* pHeartChara;
   BLECharacteristic* pCtrlChara;
-  std::string serviceMessage = "unused";
   const char* LOG_TAG = "Espers::BLEComms";
 };
 
