@@ -3,13 +3,13 @@
 
 namespace espers {
 Display::Display(ApplicationState* pState) {
-  state = pState;
+  this->pState = pState;
   // Initialize the OLED display using Wire library
   display = new SSD1306(I2C_ADDR, I2C_SDA, I2C_SCL);
   display->init();
 
   // TODO: figure out how to do this withouth reboot.
-  if (state->disp_flipSreen) display->flipScreenVertically();
+  if (pState->disp_flipSreen) display->flipScreenVertically();
 }
 void Display::storeSignal(float normalizedSample) {
   //#define storeSignal(v) signalBuffer[signalBufferOffset++%DISPLAY_WIDTH]=(v)
@@ -35,8 +35,8 @@ void Display::animateProgress(uint8_t percentage, uint8_t frameDelay) {
   }
 }
 void Display::redraw(uint32_t millis) {
-  display->setContrast(state->disp_contrast);
-  if (state->disp_invertColors) {  // Invert colors
+  display->setContrast(pState->disp_contrast);
+  if (pState->disp_invertColors) {  // Invert colors
     display->setColor(WHITE);
     display->fillRect(0, 0, DISPLAY_WIDTH, DISPLAY_HEIGHT);
     display->setColor(BLACK);
@@ -47,14 +47,21 @@ void Display::redraw(uint32_t millis) {
 
   display->setTextAlignment(TEXT_ALIGN_LEFT);
   display->setFont(ArialMT_Plain_10);
-  switch (state->disp_state) {
+  switch (pState->disp_state) {
     case DISPLAY_HOME:
       display->drawString(0, 0, "HOME");
       break;
     case DISPLAY_SIGNAL:
       // Draw midline.
-      for (int i = 0; i < DISPLAY_WIDTH; i++)
-        display->setPixel(i, DISPLAY_HEIGHT / 2);
+      for (int i = 0; i < DISPLAY_WIDTH; i++) {
+        // display->setPixel(i, DISPLAY_HEIGHT / 2);
+        uint16_t y =
+            DISPLAY_HEIGHT -
+            (((1 << 11) + pState->heart_threshold) / (float)(1 << 12)) *
+                DISPLAY_HEIGHT;
+
+        display->setPixel(i, y);
+      }
 
       if (0) {  // Visualize signal as scattered pixels
         for (int i = 0; i < DISPLAY_WIDTH; i++) {
@@ -75,13 +82,13 @@ void Display::redraw(uint32_t millis) {
       }
       // Display raw value in top left
       display->drawString(0, 0,
-                          String("SIGNAL " + String(state->disp_sig1, DEC)));
+                          String("SIGNAL " + String(pState->disp_sig1, DEC)));
       // Display blemessage
 
-      display->drawString(0, 12, state->disp_message1);
+      display->drawString(0, 12, pState->disp_message1);
       // Temporary display for heartrate.
       display->setTextAlignment(TEXT_ALIGN_RIGHT);
-      display->drawString(DISPLAY_WIDTH, 0, String(state->disp_heartrate));
+      display->drawString(DISPLAY_WIDTH, 0, String(pState->heart_rate));
       break;
     case DISPLAY_PROGRESS:
       // draw the progress bar

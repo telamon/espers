@@ -2,7 +2,7 @@
 #ifndef BLE_COMMS_H_
 #define BLE_COMMS_H_
 
-#include <BLE.h>
+#include <BLEDevice.h>
 #include <BLEServer.h>
 #include <BLEUtils.h>
 #include <esp_log.h>
@@ -20,6 +20,7 @@ class BLEComms {
   BLEComms(ApplicationState* pState);
 
  private:
+  BLEDevice ble;
   ApplicationState* pState;
   BLECharacteristic* pCtrlChara;
   const char* LOG_TAG = "Espers::BLEComms";

@@ -39,14 +39,13 @@ BLEComms::BLEComms(ApplicationState* pState) {
   this->pState = pState;
   ESP_LOGD(LOG_TAG, ">> BLE initialization starting.");
   // Initalize BLE env
-  BLE::initServer("Espers");
+  ble.init("Espers");
 
   // Create BLE Server
   BLEServer* pServer = new BLEServer();
 
   // Create the service
   BLEService* pService = pServer->createService(SERVICE_UUID);
-
   // Create the characteristics
 
   // heartrate characteristic

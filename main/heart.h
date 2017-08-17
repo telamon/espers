@@ -9,7 +9,7 @@
 namespace espers {
 
 #define ADCMAX (1 << 12)
-#define THRESHOLD_DECAY 100
+#define THRESHOLD_DECAY 500
 #define PERIOD_INTERVAL 3000
 
 class Heart {
@@ -23,7 +23,6 @@ class Heart {
   int period = 0;
   int nPulses = 0;
   int prevHeart = 0;
-  int threshold = 200;
   bool released = true;
 };
 

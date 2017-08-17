@@ -12,7 +12,7 @@
 #include <esp_bt_main.h>
 #include <esp_gap_ble_api.h>
 #include <esp_gatts_api.h>
-#include "BLE.h"
+#include "BLEDevice.h"
 #include "BLEServer.h"
 #include "BLEService.h"
 #include "BLEUtils.h"
@@ -28,14 +28,14 @@ static const char* LOG_TAG = "BLEServer";
  * @brief Construct a %BLE Server
  *
  * This class is not designed to be individually instantiated.  Instead one should create a server by asking
- * the BLE device class.
+ * the BLEDevice class.
  */
 BLEServer::BLEServer() {
 	m_appId            = -1;
 	m_gatts_if         = -1;
 	m_connectedCount   = 0;
 	m_connId           = -1;
-	BLE::m_bleServer   = this;
+	BLEDevice::m_bleServer   = this;
 	m_pServerCallbacks = nullptr;
 
 	createApp(0);

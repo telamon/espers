@@ -28,7 +28,7 @@ class Display {
   float signalBuffer[DISPLAY_WIDTH];
   uint16_t signalBufferOffset = 0;
   uint8_t progress;
-  ApplicationState* state;
+  ApplicationState* pState;
 };
 
 }  // namespace espers

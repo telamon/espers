@@ -2,22 +2,21 @@
 namespace espers {
 Heart::Heart(ApplicationState* pState) {
   this->pState = pState;
-  heartrate = 0;
   period = 0;
   nPulses = 0;
   released = true;
   prevHeart = 0;
-  threshold = 200;
 }
 
 void Heart::process(uint16_t signal, uint32_t millis) {
-  if (signal > (ADCMAX >> 1) + threshold) {
+  if (signal > (ADCMAX >> 1) + pState->heart_threshold) {
     if (released) {
       nPulses++;
       released = false;
     }
     // Dynamically tweak the threshold
-    threshold = ((signal - (ADCMAX >> 1)) * 0.8 + threshold) / 2;
+    pState->heart_threshold =
+        ((signal - (ADCMAX >> 1)) * 0.5 + pState->heart_threshold) / 2;
   } else {
     released = true;
   }
@@ -25,20 +24,19 @@ void Heart::process(uint16_t signal, uint32_t millis) {
     if (nPulses == 0) {
       // If no pulses were registered, lower the threshold but not past half
       // ADCMAX. (it's a sensor thing)
-      threshold = std::max(ADCMAX >> 1, threshold - THRESHOLD_DECAY);
+      pState->heart_threshold =
+          std::max(50, pState->heart_threshold - THRESHOLD_DECAY);
     }
     // Reset period state
-    prevHeart = heartrate;
-    heartrate = (nPulses * 20 + prevHeart) / 2;
+    prevHeart = pState->heart_rate;
+    pState->heart_rate = (nPulses * 20 + prevHeart) / 2;
     period = millis;
     nPulses = 0;
 
-    // Export current heartrate for display
-    pState->disp_heartrate = heartrate;
-
     // Broadcast new heartrate
     if (pState->ble_heartCharacteristic != NULL) {
-      pState->ble_heartCharacteristic->setValue(String(heartrate).c_str());
+      pState->ble_heartCharacteristic->setValue(
+          String(pState->heart_rate).c_str());
       pState->ble_heartCharacteristic->notify();
     }
   }
