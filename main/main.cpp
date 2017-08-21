@@ -11,10 +11,11 @@
 #include "display.h"
 #include "heart.h"
 static const char* LOG_TAG = "Espers";
-
-//#define HEARTPIN ADC1_CHANNEL_18
-#define HEARTPIN 15
-
+// SETTINGS
+#define HEARTPIN A7
+#define LOC_LNG 57.716077f
+#define LOC_LAT 11.924055f
+// END OF SETTINGS
 espers::ApplicationState state;
 espers::Display* pDisplay;
 espers::Heart* pHeart;

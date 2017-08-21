@@ -5,6 +5,21 @@
 #include "ble_comms.h"
 namespace espers {
 
+enum ESPER_CMD {
+  READ_REGISTER,
+  WRITE_REGISTER,
+} BLE_CMD;
+
+enum ESPER_REGISTERS {
+  GLOB_DELAY,          // RW
+  DISP_CONTRAST,       // RW
+  DISP_INVERT_COLORS,  // RW
+  DISP_MSG1,           // RW
+  DISP_SIG1,           // R
+  DISP_STATE,          // RW
+  HEART_THRESHOLD,     // R
+} ESPER_REGISTERS;
+
 class TestCb : public BLECharacteristicCallbacks {
  public:
   TestCb(ApplicationState* pState) : BLECharacteristicCallbacks() {
@@ -40,7 +55,6 @@ BLEComms::BLEComms(ApplicationState* pState) {
   ESP_LOGD(LOG_TAG, ">> BLE initialization starting.");
   // Initalize BLE env
   ble.init("Espers");
-
   // Create BLE Server
   BLEServer* pServer = new BLEServer();
 
