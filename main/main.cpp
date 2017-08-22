@@ -10,11 +10,9 @@
 #include "ble_comms.h"
 #include "display.h"
 #include "heart.h"
+#include "settings.h"
+
 static const char* LOG_TAG = "Espers";
-// SETTINGS
-#define HEARTPIN A7
-#define LOC_LNG 57.716077f
-#define LOC_LAT 11.924055f
 // END OF SETTINGS
 espers::ApplicationState state;
 espers::Display* pDisplay;

@@ -12,12 +12,15 @@ enum ESPER_CMD {
 
 enum ESPER_REGISTERS {
   GLOB_DELAY,          // RW
+  GLOB_TIME,           // RW
+  GLOB_POSITION,       // RW
   DISP_CONTRAST,       // RW
   DISP_INVERT_COLORS,  // RW
   DISP_MSG1,           // RW
   DISP_SIG1,           // R
   DISP_STATE,          // RW
   HEART_THRESHOLD,     // R
+
 } ESPER_REGISTERS;
 
 class TestCb : public BLECharacteristicCallbacks {

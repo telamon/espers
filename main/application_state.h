@@ -12,6 +12,10 @@ typedef enum { DISPLAY_HOME, DISPLAY_SIGNAL, DISPLAY_PROGRESS } DisplayState;
 typedef struct ApplicationState {
   // Global
   uint16_t glob_delay = 25;
+  uint64_t glob_time = 1483225200000;
+  uint64_t glob_millisAtTime = 0;
+  float glob_posLat = 57.716077f;
+  float glob_posLng = 11.924055f;
 
   // Display
   uint8_t disp_contrast = 255;
