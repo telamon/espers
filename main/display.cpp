@@ -1,7 +1,10 @@
 
 #include "display.h"
-
+#include <time.h>
 namespace espers {
+#define FONT_SM ArialMT_Plain_10
+#define FONT_MD ArialMT_Plain_16
+#define FONT_XL ArialMT_Plain_24
 Display::Display(ApplicationState* pState) {
   this->pState = pState;
   // Initialize the OLED display using Wire library
@@ -23,18 +26,36 @@ void Display::animateProgress(uint8_t percentage, uint8_t frameDelay) {
   if (percentage - progress < 0) {
     while (progress > percentage) {
       progress--;
-      redraw(millis());
+      redraw();
       delay(frameDelay);
     }
   } else {
     while (progress < percentage) {
       progress++;
-      redraw(millis());
+      redraw();
       delay(frameDelay);
     }
   }
 }
-void Display::redraw(uint32_t millis) {
+void Display::drawHome() {
+  display->setFont(FONT_SM);
+  display->drawString(0, 0, "HOME");
+  char timeString[80];
+  struct tm timeStruct = *localtime(&pState->glob_time);
+
+  // Draw date
+  strftime(timeString, sizeof(timeString), "%a %Y-%m-%d", &timeStruct);
+  display->setTextAlignment(TEXT_ALIGN_RIGHT);
+  display->drawString(DISPLAY_WIDTH, 0, timeString);
+
+  // Draw clock
+  display->setTextAlignment(TEXT_ALIGN_CENTER);
+  display->setFont(FONT_XL);
+  strftime(timeString, sizeof(timeString), "%H:%M:%S", &timeStruct);
+  display->drawString(DISPLAY_WIDTH >> 1, (DISPLAY_HEIGHT >> 1) - (24 >> 1),
+                      timeString);
+}
+void Display::redraw() {
   display->setContrast(pState->disp_contrast);
   if (pState->disp_invertColors) {  // Invert colors
     display->setColor(WHITE);
@@ -46,10 +67,10 @@ void Display::redraw(uint32_t millis) {
   }
 
   display->setTextAlignment(TEXT_ALIGN_LEFT);
-  display->setFont(ArialMT_Plain_10);
+  display->setFont(FONT_SM);
   switch (pState->disp_state) {
     case DISPLAY_HOME:
-      display->drawString(0, 0, "HOME");
+      drawHome();
       break;
     case DISPLAY_SIGNAL:
       // Draw midline.
@@ -101,7 +122,7 @@ void Display::redraw(uint32_t millis) {
   }
   if (0) {
     display->setTextAlignment(TEXT_ALIGN_RIGHT);
-    display->drawString(DISPLAY_WIDTH, DISPLAY_HEIGHT - 10, String(millis));
+    display->drawString(DISPLAY_WIDTH, DISPLAY_HEIGHT - 10, String(millis()));
   }
   display->display();
 }

@@ -7,9 +7,7 @@ class Chrono {
  public:
   Chrono(ApplicationState* appState);
   void setTime(uint64_t epochMillis);
-  uint64_t getTime();
-  uint64_t getSunset();
-  uint64_t getSunrise();
+  void updateTime();
 
  private:
   ApplicationState* pState;

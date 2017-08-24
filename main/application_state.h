@@ -3,8 +3,8 @@
  */
 #ifndef APPLICATION_STATE_H_
 #define APPLICATION_STATE_H_
-
 #include <BLECharacteristic.h>
+#include <time.h>
 namespace espers {
 
 typedef enum { DISPLAY_HOME, DISPLAY_SIGNAL, DISPLAY_PROGRESS } DisplayState;
@@ -12,8 +12,11 @@ typedef enum { DISPLAY_HOME, DISPLAY_SIGNAL, DISPLAY_PROGRESS } DisplayState;
 typedef struct ApplicationState {
   // Global
   uint16_t glob_delay = 25;
-  uint64_t glob_time = 1483225200000;
+  uint64_t glob_timeOffset = 1503563897124;
+  time_t glob_time = 0;
+  uint64_t glob_timeMillis = 0;
   uint64_t glob_millisAtTime = 0;
+  uint32_t glob_uptimeMillis = 0;
   float glob_posLat = 57.716077f;
   float glob_posLng = 11.924055f;
 

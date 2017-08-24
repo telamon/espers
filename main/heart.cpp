@@ -8,7 +8,8 @@ Heart::Heart(ApplicationState* pState) {
   prevHeart = 0;
 }
 
-void Heart::process(uint16_t signal, uint32_t millis) {
+void Heart::process(uint16_t signal) {
+  uint64_t millis = pState->glob_uptimeMillis;
   if (signal > (ADCMAX >> 1) + pState->heart_threshold) {
     if (released) {
       nPulses++;

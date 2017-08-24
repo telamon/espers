@@ -18,7 +18,7 @@ namespace espers {
 class Display {
  public:
   Display(ApplicationState* pState);
-  void redraw(uint32_t millis);
+  void redraw();
   // The display can render signals normalized to values between 0..1
   void storeSignal(float normalizedSample);
   void setProgress(uint8_t percentage);
@@ -30,6 +30,7 @@ class Display {
   uint16_t signalBufferOffset = 0;
   uint8_t progress;
   ApplicationState* pState;
+  void drawHome();
 };
 
 }  // namespace espers

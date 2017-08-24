@@ -15,7 +15,7 @@ namespace espers {
 class Heart {
  public:
   Heart(ApplicationState* pState);
-  void process(uint16_t signal, uint32_t millis);
+  void process(uint16_t signal);
 
  private:
   ApplicationState* pState;

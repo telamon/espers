@@ -53,9 +53,25 @@ typedef struct TimeEvent {
 } TimeEvent;
 // sun times configuration (angle, morning name, evening name)
 #define TIMESLENGTH 6
-static TimeEvent times[] = {
+static const TimeEvent times[] = {
     {-0.833, SUNRISE, SUNSET}, {-0.3, SUNRISE_END, SUNSET_START},
     {-6, DAWN, DUSK},          {-12, NAUTICAL_DAWN, NAUTICAL_DUSK},
     {-18, NIGHT_END, NIGHT},   {6, GOLDEN_HOUR_END, GOLDEN_HOUR}};
+
+typedef struct MoonPositionResult {
+  float azimuth;
+  float altitude;
+  float distance;
+  float parallacticAngle;
+} MoonPositionResult;
+
+MoonPositionResult getMoonPosition(uint64_t date, float lat, float lng);
+
+typedef struct MoonIlluminationResult {
+  float fraction;
+  float phase;
+  float angle;
+} MoonIlluminationResult;
+MoonIlluminationResult getMoonIllumination(uint64_t date);
 }  // namespace suncalc
 #endif
