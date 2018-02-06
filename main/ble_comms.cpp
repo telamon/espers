@@ -65,11 +65,13 @@ BLEComms::BLEComms(ApplicationState* pState) {
   BLEService* pService = pServer->createService(SERVICE_UUID);
   // Create the characteristics
 
+#ifdef ENABLE_HEARTSENSOR
   // heartrate characteristic
   // exposed on appstate
   pState->ble_heartCharacteristic = pService->createCharacteristic(
       HEARTRATE_CHARACTERISTIC_UUID, BLECharacteristic::PROPERTY_READ);
   pState->ble_heartCharacteristic->setValue("<initializing>");
+#endif
 
   // Message/display characteristic
   BLECharacteristic* pMsgChr = pService->createCharacteristic(

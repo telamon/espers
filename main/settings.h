@@ -6,7 +6,7 @@
 #define LANGUAGE "en"
 
 // Enable heartrate calculation
-#define ENABLE_HEARTSENSOR
+ #define ENABLE_HEARTSENSOR
 
 #ifdef ENABLE_HEARTSENSOR
 

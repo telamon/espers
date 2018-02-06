@@ -3,6 +3,7 @@
  */
 #ifndef APPLICATION_STATE_H_
 #define APPLICATION_STATE_H_
+#include "settings.h"
 #include <BLECharacteristic.h>
 #include <time.h>
 namespace espers {
@@ -28,10 +29,11 @@ typedef struct ApplicationState {
   uint16_t disp_sig1;
   DisplayState disp_state = DISPLAY_HOME;
 
+#ifdef ENABLE_HEARTSENSOR
   // Heartrate calculator
   uint8_t heart_rate = 0;
   uint16_t heart_threshold = 200;
-
+#endif
   // BLE/Communications
   BLECharacteristic* ble_heartCharacteristic = NULL;
 

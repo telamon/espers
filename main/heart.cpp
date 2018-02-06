@@ -1,4 +1,5 @@
 #include "heart.h"
+#ifdef ENABLE_HEARTSENSOR
 namespace espers {
 Heart::Heart(ApplicationState* pState) {
   this->pState = pState;
@@ -44,3 +45,4 @@ void Heart::process(uint16_t signal) {
 }
 
 }  // namespace espers
+#endif // ENABLE_HEARTSENSOR

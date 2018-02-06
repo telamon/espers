@@ -96,17 +96,21 @@ void Display::redraw() {
 
   display->setTextAlignment(TEXT_ALIGN_LEFT);
   display->setFont(FONT_SM);
+  int threshold = 4096 >> 1;
   switch (pState->disp_state) {
     case DISPLAY_HOME:
       drawHome();
       break;
     case DISPLAY_SIGNAL:
       // Draw midline.
+      #ifdef ENABLE_HEARTSENSOR
+      threshold = pState->heart_threshold;
+      #endif
       for (int i = 0; i < DISPLAY_WIDTH; i++) {
         // display->setPixel(i, DISPLAY_HEIGHT / 2);
         uint16_t y =
             DISPLAY_HEIGHT -
-            (((1 << 11) + pState->heart_threshold) / (float)(1 << 12)) *
+            (((1 << 11) + threshold) / (float)(1 << 12)) *
                 DISPLAY_HEIGHT;
 
         display->setPixel(i, y);
@@ -135,9 +139,11 @@ void Display::redraw() {
       // Display blemessage
 
       display->drawString(0, 12, pState->disp_message1);
+      #ifdef ENABLE_HEARTSENSOR
       // Temporary display for heartrate.
       display->setTextAlignment(TEXT_ALIGN_RIGHT);
       display->drawString(DISPLAY_WIDTH, 0, String(pState->heart_rate));
+      #endif
       break;
     case DISPLAY_PROGRESS:
       // draw the progress bar
