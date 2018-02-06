@@ -9,6 +9,7 @@
 #include <SSD1306.h>  // alias for `#include "SSD1306Wire.h"`
 #include <Wire.h>     // Only needed for Arduino 1.6.5 and earlier
 #include "application_state.h"
+#include "chrono.h"
 #include "settings.h"
 namespace espers {
 #define I2C_ADDR (0x3c)
@@ -30,6 +31,8 @@ class Display {
   uint16_t signalBufferOffset = 0;
   uint8_t progress;
   ApplicationState* pState;
+  char home_eventLine[80];
+  time_t home_lastDraw = 0;
   void drawHome();
 };
 

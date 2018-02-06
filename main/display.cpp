@@ -1,10 +1,12 @@
 
 #include "display.h"
 #include <time.h>
+#include "suncalc.h"
 namespace espers {
 #define FONT_SM ArialMT_Plain_10
 #define FONT_MD ArialMT_Plain_16
 #define FONT_XL ArialMT_Plain_24
+
 Display::Display(ApplicationState* pState) {
   this->pState = pState;
   // Initialize the OLED display using Wire library
@@ -37,6 +39,7 @@ void Display::animateProgress(uint8_t percentage, uint8_t frameDelay) {
     }
   }
 }
+
 void Display::drawHome() {
   display->setFont(FONT_SM);
   display->drawString(0, 0, "HOME");
@@ -54,6 +57,31 @@ void Display::drawHome() {
   strftime(timeString, sizeof(timeString), "%H:%M:%S", &timeStruct);
   display->drawString(DISPLAY_WIDTH >> 1, (DISPLAY_HEIGHT >> 1) - (24 >> 1),
                       timeString);
+
+  // don't recalculate less than 1s
+  if (home_lastDraw + 1 < pState->glob_time) {
+    suncalc::TimesResult tr;
+    suncalc::getTimes(&tr, pState->glob_timeMillis, pState->glob_posLat,
+                      pState->glob_posLng);
+    uint64_t dur;
+    uint64_t now = pState->glob_timeMillis;
+    const char* evName;
+    if (tr.sunset < pState->glob_timeMillis) {
+      evName = "Daylenght: ";
+      dur = tr.sunset - tr.sunrise;
+    } else if (tr.sunrise < pState->glob_timeMillis) {
+      evName = "Sunset";
+      dur = tr.sunset - pState->glob_timeMillis;
+    } else {
+      evName = "Sunrise";
+      dur = tr.sunrise - pState->glob_timeMillis;
+    }
+    humanizeDuration(timeString, dur);
+    snprintf(home_eventLine, 80, "%s%s", evName, timeString);
+    home_lastDraw = pState->glob_time;
+  }
+  display->setFont(FONT_SM);
+  display->drawString(DISPLAY_WIDTH >> 1, DISPLAY_HEIGHT - 10, home_eventLine);
 }
 void Display::redraw() {
   display->setContrast(pState->disp_contrast);

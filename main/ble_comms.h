@@ -12,9 +12,9 @@ namespace espers {
 // See the following for generating UUIDs:
 // https://www.uuidgenerator.net/
 #define SERVICE_UUID "0d531e57-d84e-4b12-830e-54acbefc22b1"
-#define HEARTRATE_CHARACTERISTIC_UUID "8db3c4cc-8279-457d-9514-11127f8ae75a"
-#define MSG_CHARACTERISTIC_UUID "8db3c5cc-8279-457d-9514-11127f8ae75a"
-#define CTRL_CHARACTERISTIC_UUID "63b9c4cc-8279-458d-9514-11127f8ae75a"
+#define HEARTRATE_CHARACTERISTIC_UUID "cf4e7ce6-27b9-40df-932a-d06d6c0d44b3"
+#define MSG_CHARACTERISTIC_UUID       "00faabe6-3d44-4980-a79e-92ffcf89610c"
+#define CTRL_CHARACTERISTIC_UUID      "c385b478-3023-42af-9375-8c49ad0a8db1"
 
 class BLEComms {
  public:

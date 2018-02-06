@@ -12,7 +12,7 @@ typedef enum { DISPLAY_HOME, DISPLAY_SIGNAL, DISPLAY_PROGRESS } DisplayState;
 typedef struct ApplicationState {
   // Global
   uint16_t glob_delay = 25;
-  uint64_t glob_timeOffset = 1503563897124;
+  uint64_t glob_timeOffset = 1503699181979;
   time_t glob_time = 0;
   uint64_t glob_timeMillis = 0;
   uint64_t glob_millisAtTime = 0;
