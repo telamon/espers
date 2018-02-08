@@ -44,9 +44,12 @@ class CtrlCallbacks : public BLECharacteristicCallbacks {
   CtrlCallbacks(ApplicationState* pState) : BLECharacteristicCallbacks() {
     this->pState = pState;
   }
-  void onRead(BLECharacteristic* pCharacteristic) {}
+  void onRead(BLECharacteristic* pCharacteristic) {
+    pCharacteristic->setValue("null");
+  }
   void onWrite(BLECharacteristic* pCharacteristic) {
     std::string cmd = pCharacteristic->getValue();
+
   }
 
  private:
