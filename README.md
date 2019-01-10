@@ -8,9 +8,13 @@ esp32-devboard, but other things in life came in between.
 
 # Installation
 
-make sure to have the esp-idf toolchain on your path and then run
+make sure to have the esp-idf toolchain on your path and then run:
 
+```bash
+  git submodule init
+  git submodule update
   make flash
+```
 
 ### License
 Gnu AGPLv3
