@@ -1,5 +1,16 @@
-# Hello World Example
+# Espers
 
-Starts a FreeRTOS task to print "Hello World"
+Attempt at building a developer-friendly smartwatch firmware
+for ESP32 based devices.
 
-See the README.md file in the upper level 'examples' directory for more information about examples.
+This project started back in 2017 when I got my hands on an
+esp32-devboard, but other things in life came in between.
+
+# Installation
+
+make sure to have the esp-idf toolchain on your path and then run
+
+  make flash
+
+### License
+Gnu AGPLv3
