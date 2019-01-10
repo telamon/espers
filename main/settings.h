@@ -15,10 +15,16 @@
 #endif
 
 // Enable 9axis accellerometer 
-#define ENABLE_ACCELLEROMETER
+#define ENABLE_KINETICS
 
-#ifdef ENABLE_ACCELLEROMETER
+#ifdef ENABLE_KINETICS
 #define ENABLE_I2C
+#endif
+
+#ifdef ENABLE_I2C
+// Configure the two i2c pins to which all the external preheprials are connected
+#define I2C_SCL_PIN 52
+#define I2C_SDA_PIN 51
 #endif
 
 #endif

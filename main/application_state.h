@@ -6,6 +6,11 @@
 #include "settings.h"
 #include <BLECharacteristic.h>
 #include <time.h>
+
+#ifdef ENABLE_I2C
+#include "i2c_hub.h"
+#endif
+
 namespace espers {
 
 typedef enum { DISPLAY_HOME, DISPLAY_SIGNAL, DISPLAY_PROGRESS } DisplayState;
@@ -29,13 +34,24 @@ typedef struct ApplicationState {
   uint16_t disp_sig1;
   DisplayState disp_state = DISPLAY_HOME;
 
-#ifdef ENABLE_HEARTSENSOR
   // Heartrate calculator
+#ifdef ENABLE_HEARTSENSOR
   uint8_t heart_rate = 0;
   uint16_t heart_threshold = 200;
 #endif
+
   // BLE/Communications
   BLECharacteristic* ble_heartCharacteristic = NULL;
+
+  // I2C communications
+#ifdef ENABLE_I2C
+  I2CHub* i2cHub = NULL;
+#endif
+
+ // Kinetics handler
+#ifdef ENABLE_KINETICS
+  uint32_t steps;
+#endif
 
 } ApplicationState;
 

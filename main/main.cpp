@@ -4,8 +4,8 @@
  */
 
 #include <Arduino.h>
-#include <driver/adc.h>
 #include <esp_log.h>
+#include "settings.h"
 #include "application_state.h"
 #include "ble_comms.h"
 #include "chrono.h"
@@ -13,9 +13,16 @@
 
 #ifdef ENABLE_HEARTSENSOR
 #include "heart.h"
+#include <driver/adc.h>
 #endif
 
-#include "settings.h"
+#ifdef ENABLE_KINETICS
+#include "kinetics.h"
+#endif
+
+#ifdef ENABLE_I2C
+#include "i2c_hub.h"
+#endif
 
 static const char* LOG_TAG = "Espers";
 
@@ -29,6 +36,12 @@ espers::Heart* pHeart;
 
 espers::BLEComms* pBLEComms;
 espers::Chrono* pChrono;
+
+#ifdef ENABLE_ACCELLEROMETER
+
+#endif
+
+
 /* --------- Setup & Loop --- */
 void setup() {
   ESP_LOGD(LOG_TAG, ">> Starting up");
